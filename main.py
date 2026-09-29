@@ -1,10 +1,10 @@
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 
 from lib.auth import require_auth
-from lib.cors import allowed_origins
+from lib.cors import CORS_HEADERS, allowed_origins
 from lib import database
 from lib.models import (
     AddTodoRequest,
@@ -19,7 +19,7 @@ app = FastAPI(title="Toy Web App Neon", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins(),
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
     allow_private_network=True,
 )
@@ -29,7 +29,18 @@ def error_response(status_code: int, detail: str) -> JSONResponse:
     return JSONResponse(
         status_code=status_code,
         content=ErrorResponse(error=detail).model_dump(),
+        headers=CORS_HEADERS,
     )
+
+
+@app.middleware("http")
+async def ensure_cors_headers(request: Request, call_next):
+    if request.method == "OPTIONS":
+        return Response(status_code=200, headers=CORS_HEADERS)
+    response = await call_next(request)
+    for key, value in CORS_HEADERS.items():
+        response.headers[key] = value
+    return response
 
 
 @app.exception_handler(HTTPException)
@@ -48,6 +59,7 @@ async def unhandled_exception_handler(_request: Request, exc: Exception):
     return error_response(500, str(exc))
 
 
+@app.get("/")
 @app.get("/api")
 def health():
     return {"message": "ok"}
