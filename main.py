@@ -19,7 +19,7 @@ app = FastAPI(title="Toy Web App Neon", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins(),
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
     allow_private_network=True,
 )
