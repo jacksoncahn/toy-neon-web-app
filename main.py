@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from lib.auth import require_auth
+from lib.cors import allowed_origins
 from lib import database
 from lib.models import (
     AddTodoRequest,
@@ -17,9 +18,9 @@ app = FastAPI(title="Toy Web App Neon", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=allowed_origins(),
     allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type", "user_id", "Authorization"],
+    allow_headers=["*"],
     allow_private_network=True,
 )
 

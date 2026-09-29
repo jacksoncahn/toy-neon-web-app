@@ -1,0 +1,27 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "http://localhost:3000"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, user_id, Authorization"
+        },
+        {
+          "key": "Access-Control-Allow-Private-Network",
+          "value": "true"
+        },
+        { "key": "Vary", "value": "Origin" }
+      ]
+    }
+  ]
+}
